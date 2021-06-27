@@ -133,7 +133,7 @@ namespace Microsoft.AspNetCore.Identity.Test
             // Assert
             Assert.False(result.Succeeded);
             Assert.True(result.IsLockedOut);
-            Assert.Contains($"User {user.Id} is currently locked out.", loggerFactory.LogStore.ToString());
+            Assert.Contains($"User is currently locked out.", loggerFactory.LogStore.ToString());
             manager.Verify();
         }
 
@@ -164,7 +164,7 @@ namespace Microsoft.AspNetCore.Identity.Test
             // Assert
             Assert.False(result.Succeeded);
             Assert.True(result.IsLockedOut);
-            Assert.Contains($"User {user.Id} is currently locked out.", loggerFactory.LogStore.ToString());
+            Assert.Contains($"User is currently locked out.", loggerFactory.LogStore.ToString());
             manager.Verify();
         }
 
@@ -187,7 +187,7 @@ namespace Microsoft.AspNetCore.Identity.Test
             var options = new Mock<IOptions<IdentityOptions>>();
             options.Setup(a => a.Value).Returns(identityOptions);
             var claimsFactory = new UserClaimsPrincipalFactory<TestUser, TestRole>(manager, roleManager.Object, options.Object);
-            var sm = new SignInManager<TestUser>(manager, contextAccessor.Object, claimsFactory, options.Object,factory.CreateLogger<SignInManager<TestUser>>(), new Mock<IAuthenticationSchemeProvider>().Object, new Mock<IUserConfirmation<TestUser>>().Object);
+            var sm = new SignInManager<TestUser>(manager, contextAccessor.Object, claimsFactory, options.Object, factory.CreateLogger<SignInManager<TestUser>>(), new Mock<IAuthenticationSchemeProvider>().Object, new Mock<IUserConfirmation<TestUser>>().Object);
             return sm;
         }
 
@@ -255,7 +255,6 @@ namespace Microsoft.AspNetCore.Identity.Test
             manager.Verify();
             auth.Verify();
         }
-
 
         [Fact]
         public async Task PasswordSignInWorksWithNonTwoFactorStore()
@@ -376,7 +375,6 @@ namespace Microsoft.AspNetCore.Identity.Test
                 return Task.FromResult(true);
             }
         }
-
 
         //[Theory]
         //[InlineData(null, true, true)]
@@ -527,7 +525,7 @@ namespace Microsoft.AspNetCore.Identity.Test
             // REVIEW: auth changes we lost the ability to mock is persistent
             //var properties = new AuthenticationProperties { IsPersistent = isPersistent };
             var authResult = AuthenticateResult.NoResult();
-             
+
             auth.Setup(a => a.AuthenticateAsync(context, IdentityConstants.ApplicationScheme)).Returns(Task.FromResult(authResult)).Verifiable();
 
             var manager = SetupUserManager(user);
@@ -642,7 +640,6 @@ namespace Microsoft.AspNetCore.Identity.Test
                     && i.Identities.First().AuthenticationType == IdentityConstants.TwoFactorRememberMeScheme),
                 It.Is<AuthenticationProperties>(v => v.IsPersistent == true))).Returns(Task.FromResult(0)).Verifiable();
 
-
             // Act
             await helper.RememberTwoFactorClientAsync(user);
 
@@ -745,7 +742,7 @@ namespace Microsoft.AspNetCore.Identity.Test
             // Assert
             Assert.False(result.Succeeded);
             Assert.False(checkResult.Succeeded);
-            Assert.Contains($"User {user.Id} failed to provide the correct password.", loggerFactory.LogStore.ToString());
+            Assert.Contains($"User failed to provide the correct password.", loggerFactory.LogStore.ToString());
             manager.Verify();
             context.Verify();
         }
@@ -861,7 +858,7 @@ namespace Microsoft.AspNetCore.Identity.Test
 
             Assert.Equal(confirmed, result.Succeeded);
             Assert.NotEqual(confirmed, result.IsNotAllowed);
-            Assert.Equal(confirmed, !loggerFactory.LogStore.ToString().Contains($"User {user.Id} cannot sign in without a confirmed email."));
+            Assert.Equal(confirmed, !loggerFactory.LogStore.ToString().Contains($"User cannot sign in without a confirmed email."));
 
             manager.Verify();
             auth.Verify();
@@ -906,7 +903,7 @@ namespace Microsoft.AspNetCore.Identity.Test
             // Assert
             Assert.Equal(confirmed, result.Succeeded);
             Assert.NotEqual(confirmed, result.IsNotAllowed);
-            Assert.Equal(confirmed, !loggerFactory.LogStore.ToString().Contains($"User {user.Id} cannot sign in without a confirmed phone number."));
+            Assert.Equal(confirmed, !loggerFactory.LogStore.ToString().Contains($"User cannot sign in without a confirmed phone number."));
             manager.Verify();
             auth.Verify();
         }
